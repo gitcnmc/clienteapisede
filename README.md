@@ -5,13 +5,11 @@
 * Copyright: Comisión Nacional de los Mercados y la Competencia (CNMC)
 * Última actualización: 07 Octubre 2015 
 
-<br/>
 
 ## 1. Introducción
 
 El Cargador de Ficheros representa un ejemplo de aplicación cliente del API REST de la Sede Electrónica (SE) de la Comisión Nacional de los Mercados y la Competencia (CNMC).
 
-<br/>
 
 ## 2. Alcance
 
@@ -19,7 +17,6 @@ El API de la SE de la CNMC es un sistema de vertical conformado por un conjunto 
 
 El Cargador de Ficheros consume los servicios publicados por la Sede, quien les da un tratatamiento específico en función del procedimiento al que van dirigidos.
 
-<br/>
 
 ## 3. Entorno tecnológico
 
@@ -30,7 +27,6 @@ El Cargador de Ficheros consume los servicios publicados por la Sede, quien les 
 * Bootstrap, Bootstrap Toggle
 * Bower
 
-<br/>
 
 ## 4. El API de la Sede
 
@@ -80,7 +76,6 @@ Además existen otros servicios para el listado y cancelación de ficheros y car
 
 [Servicios](https://api.cnmc.gob.es/doc/display/APIPUB/Descarga) para la consulta, descarga de ficheros y listado de pendientes.
 
-<br/>
 
 ## 5. Instalación
 
@@ -95,7 +90,6 @@ El API de la SE implementa servicios de seguridad de autenticación para poder a
 
 Para solicitar los credenciales, remitirse en ambos casos a la página Web de la CNMC. 
 
-<br/>
  
 ## 6. Referencias
 
@@ -103,4 +97,3 @@ Para solicitar los credenciales, remitirse en ambos casos a la página Web de la
 * [Documentación de las API's públicas](https://api.cnmc.gob.es/doc)
 * [Escenarios básicos de carga de ficheros](https://api.cnmc.gob.es/doc/display/APIPUB/Casos+de+uso+de+carga+de+ficheros)
 
-<br/>
