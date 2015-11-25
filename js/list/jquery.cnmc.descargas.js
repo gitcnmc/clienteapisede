@@ -72,10 +72,10 @@
 					tr.appendChild(tdSize);
 					
 					var tdfDisponi = document.createElement( "td" );
-					tdfDisponi.innerHTML = value.fechaDisponibilidad;
+					tdfDisponi.innerHTML = value.fechaDisponibilidad?(new Date(value.fechaDisponibilidad+" UTC")).toLocaleString():"";
 					tr.appendChild(tdfDisponi);
 					var tdfechaCaducidad = document.createElement( "td" );
-					tdfechaCaducidad.innerHTML = value.fechaCaducidad;
+					tdfechaCaducidad.innerHTML = value.fechaCaducidad?(new Date(value.fechaCaducidad +" UTC")).toLocaleString():"";
 					tr.appendChild(tdfechaCaducidad);
 					
 					var tdTipo = document.createElement( "td" );
@@ -125,7 +125,7 @@ $.fn.listarDescargas  = function(option) {
 			}
 		});
 	};
-	$.fn.listarDescargas.defaults={}
+	$.fn.listarDescargas.defaults={};
 	$.fn.listarDescargas.Constructor = Descargas;
 	
 	

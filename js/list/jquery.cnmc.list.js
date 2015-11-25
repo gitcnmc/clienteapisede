@@ -48,7 +48,7 @@
 						contentType: "application/json",								
 						success: function(data,textStatus){
 							console.log("listar ok");
-							self.recorreRespuesta(data);	
+							self.recorreRespuesta(data);
 															
 						},
 						error:  function( textStatus, errorThrown ){
@@ -85,7 +85,7 @@
 					var tdPlus = document.createElement( "td" );
 					tdPlus.appendChild(self.createPlusButton(value));
 					tdPlus.className="pl-toggle collapsed";
-					tdPlus.setAttribute("data-toggle","collapse")
+					tdPlus.setAttribute("data-toggle","collapse");
 					tdPlus.setAttribute("data-target","#files-"+value.uuidCarga);
 					tr.appendChild(tdPlus);
 					var tdNum = document.createElement( "td" );
@@ -96,20 +96,25 @@
 					tdName.innerHTML = value.uuidCarga;
 					tr.appendChild(tdName);
 					var tdInicio = document.createElement( "td" );
-					tdInicio.innerHTML = value.fechaInicio;
+					tdInicio.innerHTML = value.fechaInicio?(new Date(value.fechaInicio+" UTC")).toLocaleString():"";
 					tr.appendChild(tdInicio);
 					// var tdFin = document.createElement( "td" );
 					// tdFin.innerHTML = value.fechaFin;
 					// tr.appendChild(tdFin);
 					var tdFinProceso = document.createElement( "td" );
-					tdFinProceso.innerHTML = value.fechaInicio;
+					tdFinProceso.innerHTML =value.fechaFinProceso?(new Date(value.fechaFinProceso+" UTC")).toLocaleString():"";
 					tr.appendChild(tdFinProceso);
 					var tdEstado = document.createElement( "td" );					
-					tdEstado.appendChild(self.createButonEstado(value.estado,value.uuidCarga))
+					tdEstado.appendChild(self.createButonEstado(value.estado,value.uuidCarga));
+					var tdCancelar = document.createElement( "td" );
 					tr.appendChild(tdEstado);
+					if(value.estado=='INICIADA'){
+						tdCancelar.appendChild(self.createButonCancelar(value.uuidCarga))
+					}
+					tr.appendChild(tdCancelar);
 					var tdFiles = document.createElement( "td" );
 					tdFiles.appendChild(self.createFilestButton(value));
-					tdFiles.setAttribute("data-toggle","collapse")
+					tdFiles.setAttribute("data-toggle","collapse");
 					tdFiles.setAttribute("data-target","#files-"+value.uuidCarga);
 					tr.appendChild(tdFiles);					
 					var tbody=document.createElement("tbody");
@@ -120,10 +125,30 @@
 					$("#est-"+value.uuidCarga).click(function(){							
 						$.fn.consultaEstado($(this),value.uuidCarga);
 					});
+					if(value.estado=='INICIADA') {
+						$("#cancel-" + value.uuidCarga).click(function () {
+							$.fn.cancelarCarga($(this));
+						});
+					}
 					
 				}
 				var button=$("#listar");
 				button.toggleClass('active');
+			},
+			createButonCancelar:function(uuidCarga){
+				var but = document.createElement( "a" );
+				but.className="cancelarCarga has-spinner enlace";
+				but.id = "cancel-"+uuidCarga;
+				but.setAttribute('data-uuid',uuidCarga);
+				var span = document.createElement("span");
+				span.className="spinner fa fa-spinner fa-pulse";
+				var text = document.createElement("span");
+				text.innerText="Cancelar";
+				but.appendChild(span);
+				but.appendChild(text);
+
+				return but;
+
 			},
 			createButonEstado:function(estado,uuidCarga){
 				var but = document.createElement( "a" );
@@ -133,6 +158,7 @@
 				var span = document.createElement("span");
 				span.className="spinner fa fa-spinner fa-pulse";
 				var text = document.createElement("span");
+				text.id="est-text-"+uuidCarga;
 				text.innerText=estado;			
 				but.appendChild(span);
 				but.appendChild(text);
@@ -174,11 +200,11 @@
 			createTableFiles:function(ficheros,uuidCarga) {
 				var td = document.createElement( "td" );
 					td.className="hiddenRow";
-					td.setAttribute("colspan","5")
+					td.setAttribute("colspan","5");
 					td.setAttribute("style","border-top: none !important;");	
 				var div = document.createElement("div");
 				div.id = 'files-' + uuidCarga;
-				div.className="accordian-body collapse "
+				div.className="accordian-body collapse ";
 				var table = document.createElement("table");
 				table.className="table";				
 				var trCabecera = document.createElement("tr");
@@ -219,7 +245,7 @@
 						table.appendChild(trLinea);
 					}
 				});
-				div.appendChild(table)
+				div.appendChild(table);
 				
 				td.appendChild(div);
 				var td2 = document.createElement( "td" );
@@ -235,7 +261,26 @@
 			
 	};
 	
-	
+	$.fn.cancelarCarga = function(button){
+		button.toggleClass('active');
+		var uuid=button[0].getAttribute('data-uuid');
+
+		$.ajax({
+			url: localStorage.getItem(localStorage.getItem("entorno"))+'carga/v1/cancelar_carga//'+uuid,  //Server script to process data
+			type: 'GET',
+			success: function(data,textStatus){
+				console.log("carga cancelada");
+				console.log(data);
+				$("#est-text-"+uuid).text("CANCELADA");
+				button.toggleClass('active');
+				button.remove();
+			},
+			error:  function( textStatus, errorThrown ){
+				//alert("error",textStatus);
+				$.fn.error("Error en la peticion",textStatus.responseText);
+			},
+		});
+	};
 	$.fn.listarCargas  = function(option) {
 		var args = Array.apply(null, arguments);
 		args.shift();
@@ -253,7 +298,7 @@
 			}
 		});
 	};
-	$.fn.listarCargas.defaults={}
+	$.fn.listarCargas.defaults={};
 	$.fn.listarCargas.Constructor = ListCargas;
 	
 	

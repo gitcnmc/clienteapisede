@@ -2872,7 +2872,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff6913', end
   padding: 0;
   width: 18px;
   height: 18px;
-  background: rgba(255, 255, 255, 0.7);/* url(iCheck/minimal/minimal.png) no-repeat;*/
+  background: rgba(255, 255, 255, 0.7);
   border: none;
   cursor: pointer;
 }

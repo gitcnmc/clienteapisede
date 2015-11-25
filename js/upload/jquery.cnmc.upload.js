@@ -7,7 +7,7 @@
 	};
 
 	UploaderFile.prototype = {
-
+ 
 			constructor: UploaderFile ,
 			
 			_init : function(){
@@ -90,15 +90,23 @@
 					tr.appendChild(tdS);
 					var tdI = document.createElement( "td" );
 					tdI.appendChild(this.createInitButton(file));
-					tr.appendChild(tdI)
+					tr.appendChild(tdI);
 					var tdB = document.createElement( "td" );
 					tdB.appendChild(this.createDeleteButton(file));
-					tr.appendChild(tdB)
+					tr.appendChild(tdB);
 					
 					table.append(tr);
 					
 					$("#del-"+file.uniqueIdentifier).bind("click", {scope:this, fileid: file.uniqueIdentifier}, function(event){
-						event.data.scope.removeFile(event.data.fileid);					
+						event.data.scope.removeFile(event.data.fileid);	
+						if(file.ajaxRequest!=undefined){
+							try{
+								file.ajaxRequest.abort();
+							}catch(error){
+								console.log("error abortando peticion");
+							}
+							
+						}				
 					});
 					$("#play-"+file.uniqueIdentifier).bind("click", {scope:this, fileid: file.uniqueIdentifier}, function(event){
 						event.data.scope.play(event.data.fileid);					
@@ -124,16 +132,29 @@
 				
 			},
 			createInitButton: function(file){
+
+
+				//but.className="btn btn-default consultaEstado has-spinner";
+				//but.id = "est-"+file.uniqueIdentifier;
+				//but.setAttribute('data-uuid',uuid);
+				//var span = document.createElement("span");
+				//span.className="spinner fa fa-spinner fa-pulse";
+				//var text = document.createElement("span");
+				//text.innerText=' Consultar estado';
+				//but.appendChild(span);
+				//but.appendChild(text);
 				
 				var but = document.createElement( "a" );
-				but.className="btn btn-default";
+				but.className="btn btn-default has-spinner";
 				but.name="play-"+file.uniqueIdentifier;
 				but.id = "play-"+file.uniqueIdentifier;
-				var icon = document.createElement( "i" );
-				icon.className="glyphicon glyphicon-play";
+				var span = document.createElement("span");
+				span.className="spinner fa fa-spinner fa-pulse";
+				var icon = document.createElement( "span" );
+				icon.className="fa fa-play";
 				var nifE=$("#nif_empresa").val();
 				var nifP=$("#nif_presentador").val();
-				
+				but.appendChild(span);
 				but.appendChild(icon);
 				if(nifE=="" || nifP==""){
 					but.className="btn btn-default disabled";	
@@ -180,10 +201,61 @@
 			,
 			
 			play : function(fileId){
-				console.log("Subimos el fichero "+fileId);
-				var file=this.flow.getFromUniqueIdentifier(fileId)
+				var file=this.flow.getFromUniqueIdentifier(fileId);
 				this.upLoadFile(file);
-				
+				var btPlay= $("#play-"+fileId);
+
+
+				btPlay.children().removeClass("fa-play");
+				btPlay.toggleClass('active');
+				btPlay.unbind("click");
+				self = this;
+				window.setTimeout(function(){
+					var btPlay= $("#play-"+fileId);
+					btPlay.toggleClass('active');
+					btPlay.children().addClass("fa-stop");
+					btPlay.bind("click", {scope:self, fileid: fileId}, function(event) {
+						event.data.scope.stop(event.data.fileid);
+					});
+				},1000);
+
+			},
+			stop : function(fileId){
+				var btPlay= $("#play-"+fileId);
+				btPlay.children().addClass("fa-play");
+				btPlay.children().removeClass("fa-stop");
+				var file=this.flow.getFromUniqueIdentifier(fileId);
+				if(file.ajaxRequest!=undefined){
+					try{
+						file.ajaxRequest.abort();
+					}catch(error){
+						console.log("error abortando peticion");
+					}
+
+				}
+				btPlay.unbind("click");
+				btPlay.bind("click", {scope:this, fileid: file.uniqueIdentifier}, function(event){
+					event.data.scope.play(event.data.fileid);
+				});
+				$("#progressText-"+file.uniqueIdentifier).html( '');
+				$("#progress-"+file.uniqueIdentifier).css("width",'0%');
+				$("#progress-"+file.uniqueIdentifier).css("min-width",'0px');
+
+				if(file.uuidCarga!=undefined) {
+					$.ajax({
+						url: localStorage.getItem(localStorage.getItem("entorno")) + 'carga/v1/cancelar_carga//' + file.uuidCarga,  //Server script to process data
+						type: 'GET',
+						success: function (data, textStatus) {
+							console.log("carga cancelada");
+							console.log(data);
+							;
+						},
+						error: function (textStatus, errorThrown) {
+							//alert("error",textStatus);
+							$.fn.error("Error en la peticion", textStatus.responseText);
+						},
+					});
+				}
 			},
 			
 			pause : function(){
@@ -245,60 +317,113 @@
 			
 			upLoadFile: function(file){ 
 				var formData = new FormData();
+				var uuidCarga;
 				//https://apipre.cnmc.gob.es/carga/v1/cargar_fichero_completo?nifPresentador=a&nifEmpresa=a&idProcedimiento=1&fechaEfecto=1&tipoFichero=1&nombreFichero=1&numeroBytes=1
-				formData.append("file",file.file);
-			    $.ajax({
-			        url: localStorage.getItem(localStorage.getItem("entorno"))+'carga/v1/cargar_fichero_completo?nifPresentador='+$("#nif_presentador").val()+'&nifEmpresa='+$("#nif_empresa").val()+'&idProcedimiento='+$( "#proce option:selected" ).val()+'&tipoFichero='+$( "#tFichero option:selected" ).text()+'&nombreFichero='+file.name+'&numeroBytes='+file.size ,  //Server script to process data
-			        type: 'POST',
-			        xhr: function() {  // Custom XMLHttpRequest
-			            var myXhr = $.ajaxSettings.xhr();
-						//control de errores AJAX
-			            if(myXhr.upload){ // Check if upload property exists
-			                myXhr.upload.addEventListener('progress',function(evt){
-								console.log(evt)
-								var p = Math.floor((evt.loaded/evt.total)*100);
-								console.log(p)
-								$("#progress-"+file.uniqueIdentifier).css("min-width",'20px');
-								$("#progress-"+file.uniqueIdentifier).css("width",p+'%');
-								$("#progressText-"+file.uniqueIdentifier).html( p+'%');
-							}, false); // For handling the progress of the upload
-						
-			            }
-			            return myXhr;
-			        },
-			        //Ajax events
-			        //beforeSend: beforeSendHandler,					
-			        success: function(data,textStatus){
-						console.log("Subida ok");
+				var dataJson={
+					"nifPresentador": $("#nif_presentador").val(),
+					"nifEmpresa": $("#nif_empresa").val(),
+					"idProcedimiento": $( "#proce option:selected" ).val()
+				}
+				self=this;
+				//Inicia Carga
+				$.ajax({
+					url: localStorage.getItem(localStorage.getItem("entorno"))+'carga/v1/iniciar_carga/',  //Server script to process data
+					type: 'POST',
+					data:JSON.stringify(dataJson),
+					dataType: "json",
+					contentType: "application/json",
+					success: function(data,textStatus){
+						console.log("carga iniciada");
 						console.log(data);
-						
-						$("#progress-"+file.uniqueIdentifier).css("width",'100%');
-						$("#progress-"+file.uniqueIdentifier).addClass( "progress-bar-green" );
-						$("#progress-"+file.uniqueIdentifier).removeClass("progress-bar-aqua");
-						var td=$("#play-"+file.uniqueIdentifier).parent()[0]; 	
-						$("#play-"+file.uniqueIdentifier).remove()
-						td.appendChild($.fn.createEstadoButton(file,data.uuidCarga))
-						$("#est-"+file.uniqueIdentifier).click(function(){
-							 
-							$.fn.consultaEstado($(this),file.name);
-						});							
+						uuidCarga=data.uuidCarga;
+						file.uuidCarga=uuidCarga;
+
+						var url=localStorage.getItem(localStorage.getItem("entorno"))+'carga/v1/subir_fichero_completo?uuidCarga='+file.uuidCarga+'&tipoFichero='+$( "#tFichero option:selected" ).text()+'&nombreFichero='+file.name+'&numeroBytes='+file.size
+
+						formData.append("file",file.file);
+						//subida fichero
+						file.ajaxRequest = $.ajax({
+							url:  url,  //Server script to process data
+							type: 'POST',
+							xhr: function() {  // Custom XMLHttpRequest
+								var myXhr = $.ajaxSettings.xhr();
+								//control de errores AJAX
+								if(myXhr.upload){ // Check if upload property exists
+									myXhr.upload.addEventListener('progress',function(evt){
+										console.log(evt);
+										var p = Math.floor((evt.loaded/evt.total)*100);
+										p=(p==100?99:p);
+										console.log(p);
+										$("#progress-"+file.uniqueIdentifier).css("min-width",'20px');
+										$("#progress-"+file.uniqueIdentifier).css("width",p+'%');
+										$("#progressText-"+file.uniqueIdentifier).html( p+'%');
+									}, false); // For handling the progress of the upload
+
+								}
+								return myXhr;
+							},
+							//Ajax events
+							//beforeSend: beforeSendHandler,
+							success: function(data,textStatus){
+								console.log("Subida ok");
+								console.log(data);
+								//Confirmacion de carga
+								$.ajax({
+									url: localStorage.getItem(localStorage.getItem("entorno")) + 'carga/v1/confirmar_carga/' + uuidCarga,  //Server script to process data
+									type: 'GET',
+									success: function (data, textStatus) {
+										console.log("carga confirmada" );
+										$("#progressText-" + file.uniqueIdentifier).html('100%');
+										$("#progress-" + file.uniqueIdentifier).css("width", '100%');
+										$("#progress-" + file.uniqueIdentifier).addClass("progress-bar-green");
+										$("#progress-" + file.uniqueIdentifier).removeClass("progress-bar-aqua");
+										var td = $("#play-" + file.uniqueIdentifier).parent()[0];
+										$("#play-" + file.uniqueIdentifier).remove();
+										td.appendChild($.fn.createEstadoButton(file, file.uuidCarga));
+										$("#est-" + file.uniqueIdentifier).click(function () {
+											$.fn.consultaEstado($(this), file.name);
+
+										});
+									},
+									error: function (textStatus, errorThrown) {
+										//alert("error",textStatus);
+										if (textStatus.statusText != "abort") {
+											$.fn.error("Error en la peticion", textStatus.responseText);
+											$("#play-" + file.uniqueIdentifier).remove();
+										}
+									},
+								});
+							},
+							error:  function( textStatus, errorThrown ){
+								//alert("error",textStatus);
+								if(textStatus.statusText != "abort") {
+									$.fn.error("Error en la peticion", textStatus.responseText);
+									$("#play-" + file.uniqueIdentifier).remove();
+								}
+							},
+							// Form data
+							data: formData,
+							//Options to tell jQuery not to process data or worry about content-type.
+							cache: false,
+							contentType: false,
+							processData: false
+
+						}).always(function(jqXHR, textStatus) {
+							if (textStatus != "success" && textStatus != "abort") {
+								$.fn.error("Error en la peticion",textStatus.responseText=""?textStatus:textStatus.responseText);
+								$("#play-" + file.uniqueIdentifier).remove();
+							}
+						});
 					},
-			        error:  function( textStatus, errorThrown ){
+					error:  function( textStatus, errorThrown ){
 						//alert("error",textStatus);
 						$.fn.error("Error en la peticion",textStatus.responseText);
+						$("#play-" + file.uniqueIdentifier).remove();
 					},
-			        // Form data
-			        data: formData,
-			        //Options to tell jQuery not to process data or worry about content-type.
-			        cache: false,
-			        contentType: false,
-			        processData: false
-					
-			    }).always(function(jqXHR, textStatus) {
-					if (textStatus != "success") {
-						$.fn.error("Error en la peticion",textStatus.responseText=""?textStatus:textStatus.responseText);
-					}
-				});	
+				});
+
+
+
 			}
 			
 	};
@@ -329,10 +454,13 @@
 							console.log(error);
 						}
 						estado.innerText="Estado: "+data.estado;
+						var registros=document.createElement("p");
+						registros.innerText="Registros: "+data.registrosErrores+" errores / "+data.registrosProcesados+" procesados";
 						var body =$("#modal-body")[0];
 						body.textContent="";
 						body.appendChild(uuidCarga);
 						body.appendChild(estado);
+						body.appendChild(registros);
 						body.appendChild(errores);
 						dialog.modal("show");
 						button.toggleClass('active');
@@ -377,7 +505,14 @@
 		$("#alertError").show();
 				
 	};
-	
+	$.fn.sleep=function(milliseconds) {
+		var start = new Date().getTime();
+		for (var i = 0; i < 1e7; i++) {
+			if ((new Date().getTime() - start) > milliseconds){
+				break;
+			}
+		}
+	};
 	
 	$.fn.uploaderFile = function(option) {
 		var args = Array.apply(null, arguments);
@@ -397,8 +532,9 @@
 		});
 	};
 
-	$.fn.uploaderFile.defaults = {}
+	$.fn.uploaderFile.defaults = {};
 	$.fn.uploaderFile.Constructor = UploaderFile;
+
 	
 
 
