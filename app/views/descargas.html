@@ -1,0 +1,106 @@
+
+<div class="">
+<div class="box"  id="formulario">
+  <div class="box-header">
+  <h3 id="formTitle"class="box-title">Descargas</h3>
+  <div class="box-tools "></div>
+  </div>
+
+
+  <div class="box-body">
+           <div class="row">
+              <div class="col-lg-10">
+
+                  <div class=" caja descarga">
+                      <p>
+                          Consulta genérica de ficheros descargados o descargables.
+                          Utilizando la <a href="https://api.cnmc.gob.es/doc/display/APIPUB/consultar" target="blank_">API publica</a>
+                      </p>
+                  </div>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-lg-5">
+                  <div class="form-group">
+                      <label for="nif_empresa" class="form-label">Nif Empresa:</label>
+                      <input ng-model="credenciales.nif" id="nif_empresa" type="text" class="form-control"></input>
+                      <!--<select id="nif_empresa" class="form-control select2">
+
+                      </select>-->
+                  </div>
+              </div>
+              <div class="col-lg-5">
+                  <div class="form-group">
+                      <label for="proce">Procedimiento:</label>
+
+                      <select ng-model="catalogo.procedimientos.selected" name="procedimiento" id="proce" class="form-control select2" ng-change="dc.listarDescargas()">
+                        <option ng-repeat="procedimiento in catalogo.procedimientos.data" value="{{procedimiento.idProcedimiento}}">{{procedimiento.nombreCorto}}</option>
+                      </select>
+
+                  </div>
+              </div>
+              <div class="col-lg-5 caja descarga">
+                  <div class="form-group">
+                      <label for="desEstado">Estado:</label>
+                      <select name="desEstado" id="desEstado" class="form-control select2" ng-model="estados.selected" ng-change="dc.listarDescargas()">
+                        <option ng-repeat="estado in estados.data" value="{{estado.value}}">{{estado.choice}}</option>
+                      </select>
+                      <!-- <select name="desEstado" id="desEstado" class="form-control select2">
+                              <option value="DISPONIBLE">DISPONIBLE</option>
+                              <option value="DESCARGADO">DESCARGADO</option>
+                       </select>-->
+                  </div>
+              </div>
+
+          </div>
+
+
+          </div>
+</div>
+</div>
+
+<div class="panel panel-danger" ng-repeat="alert in alerts" style="margin:20px;">
+  <div class="panel-heading">
+      <i class="fa fa-exclamation-triangle"></i> #{{$index + 1}} ERROR EN LA PETICIÓN
+      <button ng-click="dc.closeAlert($index)" type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+  </div>
+
+  <div class="panel-body">
+    <table class="table table-bordered">
+      <tr ng-repeat="mensaje in alert.mensajes" >
+        <th style="color:#a94442;">{{mensaje.titulo}}</th>
+        <td style="color:#a94442;">{{mensaje.texto}}</td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+
+
+  <div class="box descarga caja" id="boxDescargas" >
+<div class="box-header">
+<h3 class="box-title">Descargas</h3>
+<div class="box-tools pull-right">
+<div class="btn-group">
+  <button id="listarDescargas" type="button" class="btn btn-default listar has-spinner" ng-click="dc.listarDescargas()">
+    <!-- <span class="spinner fa fa-spinner fa-pulse"></span> -->
+    <i class="fa fa-list" ></i> Listar
+  </button>
+
+
+</div>
+</div>
+</div>
+<div class="box-body table-responsive" >
+
+  <!-- <div ng-show="spin.mostrarLoader" class="circles-loader">
+  </div> -->
+  <div ng-show="gridOptions.data.length > 0">
+  <div ui-grid="gridOptions" class="grid grid-cnmc" ui-grid-auto-resize></div>
+  <div>
+
+</div>
+  </div>
+
+
+</div>

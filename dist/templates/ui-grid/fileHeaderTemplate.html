@@ -1,0 +1,6 @@
+<div class="ui-grid-filter-container" ng-repeat="colFilter in col.filters">
+  <input type="text" ng-model="colFilter.term" aria-label="Filter for column" class="form-control"></input>
+  <div role="button" class="ui-grid-filter-button" ng-click="removeFilter(colFilter, $index)" ng-if="!colFilter.disableCancelFilterButton" ng-disabled="colFilter.term === undefined || colFilter.term === null || colFilter.term === ''" ng-show="colFilter.term !== undefined && colFilter.term !== null && colFilter.term !== ''">
+  <i style="font-size: 20px;" class="ui-grid-icon-cancel" ui-grid-one-bind-aria-label="aria.removeFilter"> &nbsp; </i>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html ng-app="cargador" ng-strict-di>
+  <head>
+    <meta charset="utf-8">
+    <title>CNMC - Cliente API </title>
+
+    <link rel="stylesheet" href="./vendor/vendor.css">
+
+    <link rel="stylesheet" href="./src/app.css">
+
+    <script src="./vendor/vendor.js"></script>
+
+    <script type="text/javascript">
+      System.baseURL = "";
+      System.import("./src/app.js")
+        .then(function(){
+          System.import("../app/controllers/listasCargas.test.js");
+        })
+        .catch( console.error.bind(console) );
+
+    </script>
+
+
+  </head>
+  <body>
+
+
+  </body>
+</html>

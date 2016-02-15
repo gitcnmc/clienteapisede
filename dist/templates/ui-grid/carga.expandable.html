@@ -1,0 +1,6 @@
+
+<div class="ui-grid-cell-contents" align="center">
+	<button class="btn btn-default" ng-disabled="row.entity.partes.length === 0" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)">
+		<i style="font-size:16px;" class="fa" ng-disabled="row.entity.partes.length == 0" ng-class="(row.isExpanded) ? 'fa-minus-circle' : 'fa-plus-circle' " ></i>
+	</button>
+</div>

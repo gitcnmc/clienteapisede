@@ -1,0 +1,127 @@
+
+<div class="" >
+  <div class="box"  id="formulario">
+<div class="box-header">
+<h3 id="formTitle"class="box-title">Listas Cargar</h3>
+<div class="box-tools "></div>
+      </div>
+
+
+      <div class="box-body">
+           <div class="row">
+              <div class="col-lg-10">
+
+                  <div class=" caja listarCargas ">
+                      <p>
+                          Lista las cargas realizadas o en proceso, dependiendo del filtro establecido.
+                          Utilizando la <a href="https://api.cnmc.gob.es/doc/display/APIPUB/listar_cargas" target="blank_">API publica</a>
+                      </p>
+                  </div>
+
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-lg-5">
+                  <div class="form-group">
+                      <label for="nif_empresa" class="form-label">Nif Empresa:</label>
+                      <input ng-model="credenciales.nif" id="nif_empresa" type="text" class="form-control"></input>
+                      <!--<select id="nif_empresa" class="form-control select2">
+
+                      </select>-->
+                  </div>
+              </div>
+              <div class="col-lg-5">
+                  <div class="form-group">
+                      <label for="proce">Procedimiento:</label>
+                      <select ng-model="catalogo.procedimientos.selected" name="procedimiento" id="proce" class="form-control select2" ng-change="lc.listar_cargas()">
+                        <option ng-repeat="procedimiento in catalogo.procedimientos.data" value="{{procedimiento.idProcedimiento}}">{{procedimiento.nombreCorto}}</option>
+                      </select>
+                  </div>
+              </div>
+
+
+          </div>
+          <div class="row caja uploader listarCargas">
+              <div class="col-lg-5">
+                  <div class="form-group">
+                      <label for="nif_presentador">Nif Presentador:</label>
+                      <input ng-model="credenciales.nif_presentador" type="text" class="form-control" id="nif_presentador" name="nif_presentador" placeholder="Nif Presentador" />
+                  </div>
+              </div>
+
+
+          <!--INICIADA|CANCELADA|CONFIRMADA|PROCESADA|RECHAZADA-->
+              <div class="col-lg-5 caja listarCargas">
+                  <div class="form-group">
+                          <label for="Estado">Estado</label>
+                          <!--<select ng-model="estado" name="Estado" id="Estado" class="form-control select2">
+                              <option value="">TODOS</option>
+                              <option value="INICIADA">INICIADA</option>
+                              <option value="CANCELADA">CANCELADA</option>
+                              <option value="CONFIRMADA">CONFIRMADA</option>
+                              <option value="EN_PROCESO">EN_PROCESO</option>
+                              <option value="ACEPTADA">ACEPTADA</option>
+                              <option value="ACEPTADA_PARCIALMENTE">ACEPTADA_PARCIALMENTE</option>
+                              <option value="RECHAZADA">RECHAZADA</option>
+                          </select>-->
+                          <select name="Estado" id="Estado" class="form-control select2" ng-model="estados.selected" ng-change="lc.listar_cargas()" >
+                            <option ng-repeat="estado in estados.data" value="{{estado.value}}">{{estado.choice}}</option>
+                          </select>
+                  </div>
+              </div>
+          </div>
+  </div>
+</div>
+
+<div class="panel panel-danger" ng-repeat="alert in alerts" style="margin:20px;">
+  <div class="panel-heading">
+      <i class="fa fa-exclamation-triangle"></i> #{{$index + 1}} ERROR EN LA PETICIÓN
+      <button ng-click="lc.closeAlert($index)" type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+  </div>
+
+  <div class="panel-body">
+    <table class="table table-bordered">
+      <tr ng-repeat="mensaje in alert.mensajes" >
+        <th style="color:#a94442;">{{mensaje.titulo}}</th>
+        <td style="color:#a94442;">{{mensaje.texto}}</td>
+      </tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- <div class="alert alert-warning fade in" id="alertError" style="display:none;">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <span id="MensajeError">Introduzca el nif de la empresa.</span>
+      <pre id="preError"></pre>
+  </div> -->
+
+
+<div class="box listarCargas caja" id="listarCargas">
+  <div class="box-header">
+  <h3 class="box-title">Cargas</h3>
+  <div class="box-tools pull-right">
+  <div class="btn-group">
+    <button ng-click="lc.listar_cargas()" id="listar" type="button" class="btn btn-default listar has-spinner" >
+                        <!-- <span class="spinner fa fa-spinner fa-pulse"></span> -->
+      <i class="fa fa-list" ></i> Listar
+    </button>
+
+
+  </div>
+  </div>
+  </div>
+  <div class="box-body table-responsive">
+
+        <!--<div ng-show="spin.mostrarLoader" class="circles-loader">
+        </div>-->
+        <div ng-show="gridOptions.data.length > 0">
+        <div ui-grid="gridOptions" class="grid grid-cnmc" ui-grid-auto-resize></div>
+        <div>
+  </div>
+</div>
+
+
+
+
+</div>

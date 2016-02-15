@@ -1,0 +1,11 @@
+
+<div class="ui-grid-cell-contents" align="center">
+
+  <button ng-hide="row.entity.mostrarEstado || row.entity.derivado" ng-click="grid.appScope.cc.iniciarCarga(row.entity)" class="btn btn-default" ><i class="fa" ng-class="(row.entity.iniciarCarga) ? 'fa-stop' : 'fa-play' " ></i></button>
+  <button ng-show="row.entity.mostrarEstado && !row.entity.progressParar" class="btn btn-default" ng-click="grid.appScope.cc.consultarEstado(row.entity)">CONSULTAR ESTADO</button>
+  <button ng-hide="row.entity.progress == 100" ng-click="grid.appScope.cc.eliminarCarga(row.entity,row)" class="btn btn-danger" style="margin-left:5px;" ><i class="fa fa-times"></i></button>
+
+
+</div>
+
+<!-- ng-disabled="!grid.appScope.cc.parametrosRellenos()" -->

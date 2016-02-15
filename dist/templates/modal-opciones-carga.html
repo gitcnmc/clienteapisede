@@ -1,0 +1,52 @@
+
+<div class="modal-content"  >
+  <div class="modal-header">
+    <h4 class="modal-title" align="center" ><b>Opciones de Carga</b></h4>
+  </div>
+  <div id="modal-body" class="modal-body">
+
+    <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Fichero</th>
+        <th>Tamaño</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{modal.name}}</td>
+        <td>{{modal.size | bytes}}</td>
+      </tr>
+    </tbody>
+    </table>
+
+    <div ng-show="modal.size < 5242880" class="panel panel-warning" style="margin:20px;">
+      <div class="panel-heading">
+          <i class="fa fa-exclamation-triangle"></i> El fichero es demasiado pequeño para subirlo en múltiples fragmentos.
+      </div>
+    </div>
+    <form name="opciones">
+      <div class="radio form-horizontal form-group">
+        <label>
+          <input type="radio" ng-model="tipoSubida" value="simple" checked>
+          Subir el fichero completo en una única operación.
+        </label>
+      </div>
+      <div class="radio form-horizontal form-group">
+        <label>
+          <input ng-disabled="modal.size < 5242880" type="radio" ng-model="tipoSubida" value="truncada">
+          Subir el fichero en múltiples fragmentos comprendidos entre 5Mb y 150Mb.
+          <input min="5" max="150" required ng-disabled="tipoSubida !== 'truncada'" name="tamanio" ng-model="tamanio_elegido" type="number" placeholder="Tamaño de los fragmentos" style="margin-left:5px;min-width:200px;text-align:right;"> Mb.
+        </label>
+      </div>
+      <span style="color:red" ng-show="opciones.tamanio.$invalid && opciones.tamanio.$touched && tipoSubida === 'truncada'">
+        <span ng-show="opciones.tamanio.$invalid">El tamaño de los fragmentos es incorrecto.</span>
+      </span>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+      <button ng-disabled="tipoSubida === 'truncada' && opciones.tamanio.$invalid " class="btn btn-primary" type="button" ng-click="mc.ok(tipoSubida,tamanio_elegido)">ACEPTAR</button>
+      <button class="btn btn-danger" type="button" ng-click="mc.cancel()">CANCELAR</button>
+  </div>
+</div><!-- /.modal-content -->

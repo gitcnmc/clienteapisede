@@ -1,0 +1,13 @@
+
+<div class="modal-content"  >
+  <div class="modal-header">
+    <h4 class="modal-title"><b>{{mensaje.titulo}}</b></h4>
+  </div>
+  <div id="modal-body" class="modal-body">
+    {{mensaje.cuerpo}}
+  </div>
+  <div class="modal-footer">
+      <button ng-show="mensaje.mostrarAceptar" class="btn btn-primary" type="button" ng-click="mc.ok(true)">{{mensaje.btnAceptar}}</button>
+      <button ng-show="mensaje.mostrarCancelar" class="btn btn-danger" type="button" ng-click="mc.ok(false)">{{mensaje.btnCancelar}}</button>
+  </div>
+</div><!-- /.modal-content -->

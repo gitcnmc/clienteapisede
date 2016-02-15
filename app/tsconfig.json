@@ -1,0 +1,40 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "outDir": "../appTranspiled"
+    },
+    "filesGlob": [
+        "**/*.ts",
+        "**/*.tsx",
+        "!node_modules/**"
+    ],
+    "compileOnSave": true,
+    "buildOnSave": false,
+    "files": [
+        "app.ts",
+        "controllers/cargaExpress.ts",
+        "controllers/descargas.ts",
+        "controllers/info.ts",
+        "controllers/listasCargas.ts",
+        "controllers/modales.ts",
+        "controllers/panelEntorno.ts",
+        "controllers/principalControl.ts",
+        "directives/btnAnadirCarga.ts",
+        "directives/clickDetail.ts",
+        "directives/fragmentos.ts",
+        "factory/alerts.ts",
+        "factory/catalogo.ts",
+        "factory/consumidorRest.ts",
+        "factory/controlPeticiones.ts",
+        "factory/credenciales.ts",
+        "factory/entornoAutorizacion.ts",
+        "factory/oauth.ts",
+        "factory/tablas.ts",
+        "filters/bytes.ts",
+        "filters/ifEmpty.ts",
+        "utils/rutas.ts"
+    ],
+    "atom": {
+        "rewriteTsconfig": true
+    }
+}
